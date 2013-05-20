@@ -1,0 +1,23 @@
+TITLE: Friendly Flying Robots with Ruby
+
+ABSTRACT:
+
+We use Ruby in our Web applications. We use Ruby in our scripting. We
+even use Ruby in our mobile phone applications these days. But here's
+something new: Using Ruby to control flying robots.
+
+The Parrot AR Drone is a consumer grade quadcopter designed to be
+controlled from your smartphone over a WiFi signal. However, the
+network protocols for controlling the drone are open and published in
+the AR Drone SDK, so what is more natural than using our favorite
+programming language to communicate and control these fun devices.
+
+This talk will cover the nature of the AR Drone protocol and the
+details of getting a Ruby program to communicate to and control the
+drone. We will talk about the challenges of remote controlling flying
+objects. And if all goes well, we will actually demonstrate all of the
+above.
+
+After all, admit it.  When robots finally take over the world,
+wouldn't you prefer that they are programming in a friendly
+programming language like Ruby?
