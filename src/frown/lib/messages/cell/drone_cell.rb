@@ -12,7 +12,7 @@ class DroneCell
     @monitor = monitor
     @server = TCPServer.new(host, port)
     @drones = {}
-    run!
+    async.run
   end
 
   def send_to_drone(drone_id, msg)
@@ -25,7 +25,7 @@ class DroneCell
   end
 
   def run
-    loop { handle_connection! @server.accept }
+    loop { async.handle_connection(@server.accept) }
   end
 
   def handle_connection(socket)

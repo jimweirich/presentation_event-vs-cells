@@ -13,7 +13,7 @@ class MonitorCell
     # Celluloid::IO::TCPServer here
     @drones = nil
     @server = TCPServer.new(host, port)
-    run!
+    async.run
   end
 
   def finalize
@@ -38,7 +38,7 @@ class MonitorCell
   end
 
   def run
-    loop { handle_connection! @server.accept }
+    loop { async.handle_connection(@server.accept) }
   end
 
   def handle_connection(socket)
