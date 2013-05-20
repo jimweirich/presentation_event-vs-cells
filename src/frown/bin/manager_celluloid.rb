@@ -15,5 +15,4 @@ end
 
 main = DroneCelluloid.new
 main.run
-old_size = 0
 sleep
