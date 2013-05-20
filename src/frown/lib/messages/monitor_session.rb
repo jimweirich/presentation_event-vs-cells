@@ -27,10 +27,10 @@ module Messages
           log "#{short_id(data['id'])}     No connection for: #{data.inspect}"
           unknown_connections[data['id']] = true
         end
-      elsif data['msg']
-        log "#{short_id(data['id'])} --> #{data['msg']}"
-        connection.send_data(Messages::MsgFrame.encode(data['msg']))
-      elsif data['command'] == 'close'
+      elsif data['cmd'] == 'frown' && data['data']
+        log "#{short_id(data['id'])} --> #{data['data']}"
+        connection.send_data(Messages::MsgFrame.encode(data['data']))
+      elsif data['command'] == 'close' # TODO: This doesn't look right
         log "#{short_id(data['id'])}     Handling Close Command (#{data.inspect})"
         connection.close_because("portal request")
       else

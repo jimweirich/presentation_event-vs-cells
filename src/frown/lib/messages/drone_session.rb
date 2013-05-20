@@ -7,15 +7,13 @@ module Messages
     include EM::Protocols::LineText2
     include Messages::MainLogger
 
-    IN_SETUP_TIMEOUT_SECONDS = 5*60
     TIMEOUT_SECONDS = 2*60 + 15
-    INITIAL_COMMAND_DELAY_SECONDS = 10
 
     def initialize(*args)
       super
       updated
       @reason = nil
-      @setup = false
+      @first_time = true
     end
 
     def post_init
@@ -32,34 +30,34 @@ module Messages
     end
 
     def unbind
-      send_to_monitor(".disconnect", @reason || "external drop") if msg_received?
+      send_command_to_monitor("disconnect")
       Messages::Connections.delete(connection_id)
     end
 
     def receive_line(data)
       updated
 
-      send_to_monitor(".connect") unless msg_received?
-      msg_received
+      send_command_to_monitor("connect") if @first_time
+      @first_time = false
 
       decoded = Messages::MsgFrame.decode(data)
-      @setup = true if authorized_command?(decoded)
       send_msg_data(decoded)
     end
 
-    def send_to_monitor(*data)
+    def send_command_to_monitor(command, data=nil)
+      packet = { "id" => connection_id, 'cmd' => command }
+      packet['data'] = data if data
+      send_packet_to_monitor(packet)
+    end
+
+    def send_packet_to_monitor(packet)
       queue_name = "<--"
-      log "[DRN] #{short_id} #{queue_name} #{data.inspect}"
-      serialized_data = [connection_id, data].to_json
+      log "[DRN] #{short_id} #{queue_name} #{packet.inspect}"
       if Messages.server
-        Messages.server.enque(serialized_data)
+        Messages.server.enque(packet.to_json)
       else
         log "[DRN] No Server Found"
       end
-    end
-
-    def stale?
-      (Time.now - @last_update) > (@setup ? TIMEOUT_SECONDS : IN_SETUP_TIMEOUT_SECONDS)
     end
 
     def connection_id
@@ -70,18 +68,14 @@ module Messages
       connection_id.sub(/-[^-]+-[^-]+-[^-]+$/,'')
     end
 
+    def stale?
+      (Time.now - @last_update) > TIMEOUT_SECONDS
+    end
+
     private
 
     def updated
       @last_update = Time.now
-    end
-
-    def msg_received?
-      @_msg_received
-    end
-
-    def msg_received
-      @_msg_received = true
     end
 
     def log_ip_address
@@ -94,27 +88,8 @@ module Messages
       end
     end
 
-    def authorized_command?(command)
-      command.start_with?("authorized")
-    end
-
-    def first_command?(command)
-      command.start_with?("challenge")
-    end
-
     def send_msg_data(string)
-      if first_command?(string)
-        send_in(INITIAL_COMMAND_DELAY_SECONDS, string)
-      else
-        send_to_monitor(".data", string)
-      end
+      send_command_to_monitor("frown", string)
     end
-
-    def send_in(seconds, string)
-      EventMachine::Timer.new(seconds) do
-        send_to_monitor(string)
-      end
-    end
-
   end
 end

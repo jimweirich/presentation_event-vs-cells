@@ -21,17 +21,17 @@ class MonitorCell
   end
 
   def connect(drone_id)
-    data = [drone_id, [".connect"]].to_json
+    data = { "id" => drone_id, "cmd" => "connect" }.to_json
     @ios.puts(data) if @ios
   end
 
   def disconnect(drone_id)
-    data = [drone_id, [".disconnect"]].to_json
+    data = { "id" => drone_id, "cmd" => "disconnect" }.to_json
     @ios.puts(data) if @ios
   end
 
   def send_to_server(drone_id, msg)
-    data = [drone_id, [".data", msg]].to_json
+    data = { "id" => drone_id, "cmd" => "frown", "data" => msg}.to_json
     @ios.puts(data) if @ios
   rescue Errno::EPIPE
     @ios = nil
@@ -51,8 +51,12 @@ class MonitorCell
         monitor_data = @ios.gets
         data = JSON.parse(monitor_data)
         drone_id = data["id"]
-        msg = data["msg"]
-        @drones.async.send_to_drone(drone_id, msg) if @drones
+        if data["cmd"] == 'frown'
+          msg = data["data"]
+          @drones.async.send_to_drone(drone_id, msg) if @drones && msg
+        else
+          puts "*** UNRECOGNIZED COMMAND FROM MONITOR: <<<#{data}>>>"
+        end
       rescue JSON::ParserError => ex
         puts "*** FAILED TO PARSE #{monitor_data.inspect}"
       end
