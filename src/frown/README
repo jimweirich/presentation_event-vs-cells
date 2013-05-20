@@ -1,0 +1,13 @@
+Run this demo in three separate terminal windows.
+
+Terminal 1:
+    ruby -Ilib bin/manager_evented.rb
+
+Terminal 2:
+    ruby -Ilib bin/monitor_evented.rb
+
+Terminal 3:
+    ruby -Ilib bin/fly.rb -e 10
+
+You can substitute "celluloid" for "evented" above to get celluloid
+based implementations.

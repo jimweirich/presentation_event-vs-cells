@@ -1,8 +1,8 @@
-source :rubygems
+source 'https://rubygems.org'
 
-gem 'eventmachine',   '~> 0.12'
-gem 'uuid',           '~> 2.3'
-gem 'json',           '~> 1.4.6'
+gem 'eventmachine'
+gem 'uuid'
+gem 'json'
 gem 'celluloid'
 gem 'celluloid-io'
 
@@ -10,6 +10,5 @@ group :test do
   gem 'rspec',        '~> 2.0', :require => false
   gem 'rspec-given',  '~> 1.0'
   gem 'flexmock',     '> 0.9', :require => false
-  gem 'timecop',      '~> 0.3.5'
-  gem 'gimme',        '~> 0.1.7'
+  gem 'timecop'
 end

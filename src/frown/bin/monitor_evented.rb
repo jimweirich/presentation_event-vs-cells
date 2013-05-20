@@ -15,11 +15,6 @@ class Drone
     @y = 0
   end
 
-  def position=(x,y)
-    @x = x
-    @y = y
-  end
-
   def handle_data(string)
     cmd, *values = string.split
     case cmd

@@ -1,8 +1,13 @@
 #!/usr/bin/ruby -wKU
 
-if ARGV.empty?
-  puts "Usage: fly.rb N"
+def exit_with_error(error_message)
+  puts error_message
+  usage
   exit(1)
+end
+
+def usage
+  puts "Usage: fly.rb [-ec] N"
 end
 
 NAMES = ('A'..'Z').to_a +
@@ -10,11 +15,26 @@ NAMES = ('A'..'Z').to_a +
   ('a'..'z').to_a +
   ['+', '-', '=', '*']
 
-n = ARGV.first.to_i
+number = 0
+style = "evented"
+ARGV.each do |arg|
+  case arg
+  when '-c'
+    style = "celluloid"
+  when '-e'
+    style = "evented"
+  when /^\d+$/
+    number = arg.to_i
+  else
+    exit_with_error "ERROR: Unrecognized argument '#{arg}'"
+  end
+end
 
-threads = (0...n).map do |i|
+exit_with_error "Please specify a number of drones to fly" if number <= 0
+
+threads = (0...number).map do |i|
   Thread.new do
-    system "ruby -Ilib bin/drone.rb '#{NAMES[i % NAMES.size]}'"
+    system "ruby -Ilib bin/drone_#{style}.rb '#{NAMES[i % NAMES.size]}'"
   end
 end
 
