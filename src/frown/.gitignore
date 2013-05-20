@@ -1,0 +1,7 @@
+.project_env.rc
+.rbx
+.rvmrc
+/log/*
+old-spec
+pkg
+tmp

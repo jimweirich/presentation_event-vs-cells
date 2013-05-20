@@ -1,0 +1,168 @@
+
+bin/drone.rb,261
+class DroneReactorDroneReactor6,47
+  def initializeinitialize9,139
+  def post_initpost_init16,236
+  def unbindunbind24,369
+  def receive_linereceive_line29,432
+  def rand_coordrand_coord39,640
+  def rand_walkrand_walk43,691
+  def movemove50,817
+
+bin/drone_celluloid.rb,85
+class DroneCelluloidDroneCelluloid5,96
+  DRONES =DRONES7,118
+  def runrun9,133
+
+bin/drone_messages.rb,193
+def informinform5,54
+def symbolizesymbolize10,113
+def read_configread_config23,289
+BINDIR =BINDIR30,404
+HOMEDIR =HOMEDIR31,430
+CONFIG_FILE =CONFIG_FILE33,462
+CONFIG =CONFIG34,518
+
+bin/drone_monitor.rb,669
+class DroneDrone7,97
+  attr_accessor :drone_id, :name, :x, :ydrone_id8,109
+  attr_accessor :drone_id, :name, :x, :yname8,109
+  attr_accessor :drone_id, :name, :x, :yx8,109
+  attr_accessor :drone_id, :name, :x, :yy8,109
+  def initializeinitialize10,151
+  def position=position=18,271
+  def handle_datahandle_data23,321
+  def sendsend37,611
+class ServerReactorServerReactor42,707
+  def initializeinitialize45,800
+  def post_initpost_init52,915
+  def unbindunbind56,959
+  def receive_linereceive_line62,1062
+  def put_atput_at82,1594
+  def infoinfo89,1691
+  def movedmoved99,1916
+  def putsputs113,2322
+  def short_idshort_id119,2394
+
+bin/fly.rb,19
+NAMES =NAMES8,77
+
+lib/messages/cell/drone_cell.rb,207
+class DroneCellDroneCell4,68
+  def initializeinitialize7,109
+  def send_to_dronesend_to_drone18,410
+  def finalizefinalize23,505
+  def runrun27,556
+  def handle_connectionhandle_connection31,620
+
+lib/messages/cell/line_protocol.rb,151
+class LineProtocolLineProtocol1,0
+  def initializeinitialize2,19
+  def getsgets8,126
+  def putsputs20,319
+  def read_socketread_socket25,402
+
+lib/messages/cell/monitor_cell.rb,312
+class MonitorCellMonitorCell3,16
+  attr_accessor :dronesdrones6,59
+  def initializeinitialize8,84
+  def finalizefinalize19,384
+  def connectconnect23,435
+  def disconnectdisconnect28,538
+  def send_to_serversend_to_server33,647
+  def runrun40,801
+  def handle_connectionhandle_connection44,865
+
+lib/messages/drone_session.rb,937
+module MessagesMessages4,39
+  module DroneSessionDroneSession5,55
+    IN_SETUP_TIMEOUT_SECONDS =IN_SETUP_TIMEOUT_SECONDS10,149
+    TIMEOUT_SECONDS =TIMEOUT_SECONDS11,185
+    INITIAL_COMMAND_DELAY_SECONDS =INITIAL_COMMAND_DELAY_SECONDS12,217
+    def initializeinitialize14,257
+    def post_initpost_init21,359
+    def close_becauseclose_because26,457
+    def unbindunbind34,640
+    def receive_linereceive_line39,796
+    def send_to_monitorsend_to_monitor50,1051
+    def stale?stale?61,1359
+    def connection_idconnection_id65,1471
+    def short_idshort_id69,1542
+    def updatedupdated75,1631
+    def msg_received?msg_received?79,1686
+    def msg_receivedmsg_received83,1738
+    def log_ip_addresslog_ip_address87,1796
+    def authorized_command?authorized_command?97,2085
+    def first_command?first_command?101,2171
+    def send_msg_datasend_msg_data105,2251
+    def send_insend_in113,2439
+
+lib/messages/logger.rb,322
+module MessagesMessages1,0
+  def self.loggerlogger2,16
+  def self.loggerself.logger2,16
+  module MainLoggerMainLogger6,66
+    LOG_FILE =LOG_FILE7,86
+    def self.loglog9,162
+    def self.logself.log9,162
+    def self.log_timelog_time16,372
+    def self.log_timeself.log_time16,372
+    def loglog20,448
+
+lib/messages/monitor_session.rb,365
+module MessagesMessages3,30
+  module MonitorSessionMonitorSession4,46
+    def post_initpost_init9,142
+    def enqueenque14,219
+    def unbindunbind18,275
+    def receive_linereceive_line22,326
+    def short_idshort_id44,1202
+    def log_ip_addresslog_ip_address48,1281
+    def unknown_connectionsunknown_connections59,1564
+    def loglog63,1635
+
+lib/messages/msg_frame.rb,200
+module MessagesMessages1,0
+  class MsgFrameMsgFrame2,16
+    def self.decodedecode3,33
+    def self.decodeself.decode3,33
+    def self.encodeencode7,101
+    def self.encodeself.encode7,101
+
+lib/messages/periodic_timer.rb,312
+module MessagesMessages1,0
+  module PeriodicTimerPeriodicTimer2,16
+    def self.check_connectioncheck_connection3,39
+    def self.check_connectionself.check_connection3,39
+    def self.ticktick9,179
+    def self.tickself.tick9,179
+    def self.startstart16,364
+    def self.startself.start16,364
+
+lib/messages/redis.rb,226
+module MessagesMessages1,0
+  module RedisRedis2,16
+    def redisredis3,31
+    def self.serverserver7,83
+    def self.serverself.server7,83
+    def self.server=server=11,126
+    def self.server=self.server=11,126
+
+lib/messages/terminal_control.rb,168
+class TerminalControlTerminalControl2,1
+  def clear_screenclear_screen3,23
+  def clear_lineclear_line8,83
+  def goto_homegoto_home12,126
+  def gotogoto16,171
+
+lib/messages.rb,383
+module MessagesMessages11,178
+  Connections =Connections12,194
+  def self.serverserver14,214
+  def self.serverself.server14,214
+  def self.server=server=18,251
+  def self.server=self.server=18,251
+  def self.shutdownshutdown22,306
+  def self.shutdownself.shutdown22,306
+  def self.error_handlererror_handler31,562
+  def self.error_handlerself.error_handler31,562
