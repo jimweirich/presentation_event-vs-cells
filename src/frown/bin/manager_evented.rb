@@ -20,37 +20,26 @@ def symbolize(obj)
   end
 end
 
-def read_config(fn)
-  return {} if ! File.exist?(fn)
-
-  config = YAML.load_file(fn) || {}
-  symbolize(config)
-end
-
 BINDIR = File.dirname($0)
 HOMEDIR = File.dirname(BINDIR)
 
-CONFIG_FILE = File.join(HOMEDIR, 'config/messages.yml')
-CONFIG = read_config(CONFIG_FILE)
+inform "Drone Manager"
 
-inform "Messages ... #{CONFIG[:env]}"
-
-socket_options = CONFIG[:socket] || {}
-socket_max = (socket_options[:max] || 5000).to_i
+SOCKET_MAX = 5000
 
 max_files = EventMachine.set_descriptor_table_size
-if (max_files < socket_max)
-  inform "File descriptor table size #{max_files} limits max# sockets, attempting change to #{socket_max}"
-  max_files = EventMachine.set_descriptor_table_size(socket_max)
+if (max_files < SOCKET_MAX)
+  inform "File descriptor table size #{max_files} limits max# sockets, attempting change to #{SOCKET_MAX}"
+  max_files = EventMachine.set_descriptor_table_size(SOCKET_MAX)
 end
 inform "File descriptor table size is now #{max_files}"
 
 EventMachine.epoll
 
 EventMachine.run {
-  socket_host = socket_options[:host] || "0.0.0.0"
-  socket_port = (socket_options[:port] || 8090).to_i
-  inform "SOCKET Options: #{socket_options.inspect}"
+  socket_host = "0.0.0.0"
+  socket_port = 8090
+  inform "Server Address #{socket_host} on port #{socket_port}"
 
   EventMachine.start_server socket_host, socket_port+1, Messages::MonitorSession
   EventMachine.start_server socket_host, socket_port, Messages::DroneSession
