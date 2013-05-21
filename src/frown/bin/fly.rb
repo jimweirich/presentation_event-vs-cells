@@ -23,6 +23,8 @@ ARGV.each do |arg|
     style = "celluloid"
   when '-e'
     style = "evented"
+  when '-f'
+    style = "flee"
   when /^\d+$/
     number = arg.to_i
   else

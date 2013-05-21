@@ -46,7 +46,7 @@ class MonitorCell
   def handle_connection(socket)
     @sock = socket
     _, port, host = socket.peeraddr
-    puts "*** Received connection from #{host}:#{port}"
+    puts "*** Monitor connecting from #{host}:#{port}"
     while line = @sock.gets
       begin
         data = JSON.parse(line)

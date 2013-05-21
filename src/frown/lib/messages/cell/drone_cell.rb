@@ -18,6 +18,8 @@ class DroneCell
   def send_to_drone(drone_id, msg)
     ios = @drones[drone_id]
     ios.puts(msg) if ios
+  rescue Errno::EPIPE
+    puts "Error while sending to drone #{drone_id}: #{ex}"
   end
 
   def close_server

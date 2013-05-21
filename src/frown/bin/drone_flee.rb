@@ -4,6 +4,8 @@ require 'celluloid/io'
 class DroneController
   include Celluloid::IO
 
+  attr_reader :x, :y
+
   def initialize(name, host=nil)
     host = host || 'localhost'
     @name = name
@@ -29,9 +31,35 @@ class DroneController
         @running = false
       when /^radar/
         coords = parse_radar(line)
+        move_away(coords)
       end
     end
     @socket.close
+  end
+
+  def move_away(coords)
+    coords = coords.reject { |cx, cy| cx==x && cy==y }
+    best_move = find_best_move(possible_moves, coords)
+    move_to(*best_move)
+  end
+
+  def possible_moves
+    [ [x,y],   [x-1, y],   [x+1, y],
+      [x,y-1], [x-1, y-1], [x+1, y-1],
+      [x,y+1], [x-1, y+1], [x+1, y+1],
+    ].select { |x, y| x >= 1 && x <= 15 && y >= 1 && y <= 15 }
+  end
+
+  def find_best_move(possible_moves, coords)
+    ranked_moves = possible_moves.map { |mx, my|
+      dist_coords = coords.map { |cx, cy| [dist(mx, my, cx, cy), [mx, my]] }.sort
+      dist_coords.first
+    }.compact.sort
+    if ranked_moves.empty?
+      [x, y]
+    else
+      ranked_moves.last[1]
+    end
   end
 
   def parse_radar(line)
@@ -51,10 +79,18 @@ class DroneController
     result
   end
 
-  def move
-    @x = rand_walk(@x)
-    @y = rand_walk(@y)
+  def move_to(x, y)
+    @x = x
+    @y = y
     send_data("position #{@x} #{@y}\n")
+  end
+
+  def random_move
+    move_to(rand_walk(@x), rand_walk(@y))
+  end
+
+  def dist(x1, y1, x2, y2)
+    Math.sqrt((x1-x2)**2 + (y1-y2)**2)
   end
 
   def send_data(string)
@@ -71,9 +107,9 @@ if $0 == __FILE__
   end
 
   drone = DroneController.new(name, host)
+  sleep 1
 
   while drone.running?
-    sleep 1.0
-    drone.move
+    sleep 1
   end
 end

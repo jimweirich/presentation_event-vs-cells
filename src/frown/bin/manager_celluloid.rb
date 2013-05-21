@@ -8,8 +8,8 @@ class DroneCelluloid
   DRONES = {}
 
   def run
-    monitor = MonitorCell.new("127.0.0.1", 8091)
-    drones = DroneCell.new(monitor, "127.0.0.1", 8090)
+    monitor = MonitorCell.new("0.0.0.0", 8091)
+    drones = DroneCell.new(monitor, "0.0.0.0", 8090)
     monitor.drones = drones
   end
 end
