@@ -1,3 +1,4 @@
+ENV['PATH'] = ENV['PATH'] + ":/usr/sbin"
 require 'celluloid/io'
 require 'messages/cell/drone_cell'
 require 'messages/cell/monitor_cell'

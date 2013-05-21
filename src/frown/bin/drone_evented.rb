@@ -72,5 +72,5 @@ EventMachine::run {
     EventMachine.stop_event_loop
   }
 
-  channel = EventMachine::connect "localhost", 8090, DroneReactor, name
+  EventMachine::connect "localhost", 8090, DroneReactor, name
 }

@@ -3,12 +3,13 @@ require 'json'
 class MonitorCell
   include Celluloid::IO
 
+  finalizer :close_server
+
   attr_accessor :drones
 
   def initialize(host, port)
-    puts "*** Starting Drone Server Connection on #{host}:#{port}"
+    puts "*** Starting Monitor Connection on #{host}:#{port}"
     @sock = nil
-    @ios = nil
     # Since we included Celluloid::IO, we're actually making a
     # Celluloid::IO::TCPServer here
     @drones = nil
@@ -16,25 +17,26 @@ class MonitorCell
     async.run
   end
 
-  def finalize
+  def close_server
     @server.close if @server
   end
 
   def connect(drone_id)
     data = { "id" => drone_id, "cmd" => "connect" }.to_json
-    @ios.puts(data) if @ios
+    @sock.puts(data) if @sock
   end
 
   def disconnect(drone_id)
     data = { "id" => drone_id, "cmd" => "disconnect" }.to_json
-    @ios.puts(data) if @ios
+    @sock.puts(data) if @sock
   end
 
-  def send_to_server(drone_id, msg)
+  def send_to_monitor(drone_id, msg)
     data = { "id" => drone_id, "cmd" => "frown", "data" => msg}.to_json
-    @ios.puts(data) if @ios
+    @sock.puts(data) if @sock
   rescue Errno::EPIPE
-    @ios = nil
+    puts "*** Monitor Send Error: #{ex}"
+    @sock = nil
   end
 
   def run
@@ -43,13 +45,11 @@ class MonitorCell
 
   def handle_connection(socket)
     @sock = socket
-    @ios = LineProtocol.new(@sock)
     _, port, host = socket.peeraddr
     puts "*** Received connection from #{host}:#{port}"
-    loop {
+    while line = @sock.gets
       begin
-        monitor_data = @ios.gets
-        data = JSON.parse(monitor_data)
+        data = JSON.parse(line)
         drone_id = data["id"]
         if data["cmd"] == 'frown'
           msg = data["data"]
@@ -60,8 +60,12 @@ class MonitorCell
       rescue JSON::ParserError => ex
         puts "*** FAILED TO PARSE #{monitor_data.inspect}"
       end
-    }
-  rescue EOFError
-    puts "*** #{host}:#{port} disconnected"
+    end
+  rescue EOFError => ex
+    puts "*** Monitor Receive Error: #{ex}"
+  ensure
+    puts "*** Monitor at #{host}:#{port} disconnected"
+    @sock.close
+    @sock = nil
   end
 end

@@ -13,9 +13,11 @@ class Drone
     @name = "?"
     @x = 0
     @y = 0
+    @crashed = false
   end
 
-  def handle_data(string)
+  def handle_data(string, monitor)
+    return if crashed?
     cmd, *values = string.split
     case cmd
     when /^n/i
@@ -27,6 +29,15 @@ class Drone
       @y = values[1].to_i
       @conn.moved(self, oldx, oldy)
     end
+  end
+
+  def crashed?
+    @crashed
+  end
+
+  def crash
+    @crashed = true
+    send_frown("crash!")
   end
 
   def send_frown(frown_command)
@@ -71,16 +82,27 @@ class ServerReactor < EventMachine::Connection
       @drones.delete(drone_id)
       puts "drone #{drone.name} disconnected [#{info}]"
     when 'frown'
-      frown = data["data"]
-      drone.handle_data(frown)
-      drone.send_frown("name?") if drone.name == '?'
+      if drone.crashed?
+        drone.crash
+      else
+        frown = data["data"]
+        drone.handle_data(frown, self)
+        drone.send_frown("name?") if drone.name == '?'
+      end
     end
   end
 
-  def put_at(x, y, char)
-    if x != 0
-      @tc.goto(y+1, 3*x)
-      printf char
+  def moved(drone, oldx, oldy)
+    put_at(oldx, oldy, "   ")
+    put_at(drone.x, drone.y, ":" + drone.name[0] + ":")
+    @tc.goto_home
+
+    @drones.each do |other_id, other|
+      if drone != other && (drone.x == other.x && drone.y == other.y)
+        drone.crash
+        other.crash
+        puts "Crash Detected #{drone.name} / #{other.name}  [#{info}]"
+      end
     end
   end
 
@@ -94,17 +116,10 @@ class ServerReactor < EventMachine::Connection
     result
   end
 
-  def moved(drone, oldx, oldy)
-    put_at(oldx, oldy, "   ")
-    put_at(drone.x, drone.y, ":" + drone.name[0] + ":")
-    @tc.goto_home
-
-    @drones.each do |other_id, other|
-      if drone != other && (drone.x == other.x && drone.y == other.y)
-        drone.send_frown("crash!")
-        other.send_frown("crash!")
-        puts "Crash Detected #{drone.name} / #{other.name}  [#{@drones.size}]"
-      end
+  def put_at(x, y, char)
+    if x != 0
+      @tc.goto(y+1, 3*x)
+      printf char
     end
   end
 
