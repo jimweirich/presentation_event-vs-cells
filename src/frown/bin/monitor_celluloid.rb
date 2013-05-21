@@ -100,6 +100,9 @@ class MonitorServer
         frown = data["data"]
         drone.handle_data(frown)
         drone.send_frown("name?") if drone.name == '?'
+        if frown =~ /^name/ && drone.name != '?'
+          puts "Drone #{drone.name} identified [#{info}]"
+        end
       end
     end
   end
