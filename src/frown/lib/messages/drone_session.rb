@@ -40,8 +40,12 @@ module Messages
       send_command_to_monitor("connect") if @first_time
       @first_time = false
 
-      decoded = Messages::MsgFrame.decode(data)
-      send_msg_data(decoded)
+      send_msg_data(data)
+    end
+
+    def send_frown_to_drone(frown_command)
+      frown_command << "\n" unless frown_command =~ /\n\z/
+      send_data(frown_command)
     end
 
     def send_command_to_monitor(command, data=nil)

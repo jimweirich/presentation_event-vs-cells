@@ -1,5 +1,3 @@
-require 'messages/msg_frame'
-
 module Messages
   module MonitorSession
 
@@ -29,7 +27,7 @@ module Messages
         end
       elsif data['cmd'] == 'frown' && data['data']
         log "#{short_id(data['id'])} --> #{data['data']}"
-        connection.send_data(Messages::MsgFrame.encode(data['data']))
+        connection.send_frown_to_drone(data['data'])
       elsif data['command'] == 'close' # TODO: This doesn't look right
         log "#{short_id(data['id'])}     Handling Close Command (#{data.inspect})"
         connection.close_because("portal request")
@@ -37,8 +35,8 @@ module Messages
         log "#{short_id(data['id'])}     Unknown command from portal: #{data.inspect}"
       end
     rescue StandardError => ex
-      Messages.logger.log "[ERR] #{ex.inspect}"
-      Messages.logger.log ex.backtrace
+      log "[ERR] #{ex.inspect}"
+      log ex.backtrace
     end
 
     def short_id(long_id)
